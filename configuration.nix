@@ -18,7 +18,11 @@
       AppleInterfaceStyle = "Dark";
       KeyRepeat = 2;          # fast key repeat
       InitialKeyRepeat = 15;  # short delay before repeat
-      _HIHideMenuBar = true;  # auto-hide the menu bar
+      # Keep the menu bar always visible. Must be *declared* (not just left
+      # commented): the stored default is currently 1, and an unset value means
+      # nix-darwin never resets it - so the bar keeps auto-hiding. Set to true
+      # if you ever actually want the auto-hide-on-hover behavior back.
+      _HIHideMenuBar = false;
       AppleShowAllExtensions = true;
     };
     dock.autohide = true;
@@ -47,6 +51,8 @@
     onActivation.extraFlags = [ "--force" ];
 
     # Top-level formulae (`brew leaves`). Dependencies are kept automatically.
+    # NOTE: jq, starship, and the git binary are provided by nix (see home.nix),
+    # so they're intentionally NOT listed here - avoid re-adding (double copies).
     brews = [
       "cask"
       "cmake"
@@ -61,7 +67,6 @@
       "gh"
       "git"
       "herdr"
-      "jq"
       "lld"
       "makensis"
       "nvm"
@@ -72,7 +77,6 @@
       "qt"
       "railway"
       "rustup"
-      "starship"
       "swiftformat"
       "swiftlint"
       "tailscale"
@@ -86,7 +90,9 @@
       "bitwarden"
       "brave-browser"
       "calibre"
-      "claude-code"
+      # claude-code is intentionally NOT a cask - installed natively at
+      # ~/.local/bin/claude (self-updating). The cask's `zap` deletes the native
+      # install + ~/.claude config, so re-adding it here is a data-loss trap.
       "codex"
       "discord"
       "firefox"

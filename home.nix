@@ -25,6 +25,13 @@ in
   # PATH additions carried over from the old hand-written .zshrc.
   # These land in ~/.zshenv, so they apply to every shell (not just interactive).
   home.sessionPath = [
+    # Homebrew's bin. /etc/zshrc adds this via `brew shellenv`, but ONLY for
+    # interactive shells - and right after a reboot it's silently skipped while
+    # nix-darwin activation is still wiring up /run/current-system (the `brew`
+    # wrapper). Declaring it here writes it to ~/.zshenv, so brew CLIs (gls,
+    # eza, ...) resolve in EVERY shell - the same reason `claude` always works.
+    "/opt/homebrew/bin"
+    "/opt/homebrew/sbin"
     "$HOME/.grok/bin"      # grok cli (nigrok alias needs it)
     "$HOME/.opencode/bin"  # opencode cli
     "$HOME/.local/bin"     # user bins: uv's python3.11, etc.
@@ -55,15 +62,19 @@ in
       pull = "git pull";
       m = "git switch main";
       opussy = "claude --dangerously-skip-permissions";
-      codicks = "codex --full-auto";
+      codicks = "codex --yolo";
       nigrok = "grok --always-approve";
       ls = "gls --color=auto";
     };
   };
 
-  programs.git.settings.user = {
-    name = "daviddkim03";
-    email = "daviddkim03@gmail.com";
+  programs.git = {
+    enable = true;  # REQUIRED: without it home-manager writes no gitconfig and
+                    # this block is inert (a stray ~/.gitconfig wins instead).
+    settings.user = {
+      name = "daviddkim03";
+      email = "daviddkim03@gmail.com";
+    };
   };
 
   programs.starship = {
